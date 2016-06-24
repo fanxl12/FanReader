@@ -53,7 +53,7 @@ public class ZhihuStoryActivity extends BaseActivity {
 	}
 
 	private void getData() {
-
+		wvZhihu.loadUrl("http://www.baidu.com");
 	}
 
 	private void initView() {
