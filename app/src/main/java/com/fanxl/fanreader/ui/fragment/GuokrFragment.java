@@ -47,6 +47,7 @@ public class GuokrFragment extends BaseFragment implements IGuokrFragment, Swipe
 	private ArrayList<GuokrHotItem> guokrHotItems = new ArrayList<>();
 	private GuokrAdapter guokrAdapter;
 	private LinearLayoutManager mLinearLayoutManager;
+	int pastVisiblesItems, visibleItemCount, totalItemCount;
 
 
 	@Nullable
@@ -54,7 +55,6 @@ public class GuokrFragment extends BaseFragment implements IGuokrFragment, Swipe
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_common, container, false);
 		mUnbinder = ButterKnife.bind(this, view);
-		Log.i(TAG, "onCreateView: ");
 		return view;
 	}
 
@@ -72,6 +72,22 @@ public class GuokrFragment extends BaseFragment implements IGuokrFragment, Swipe
 		swipeTarget.setLayoutManager(mLinearLayoutManager);
 		swipeTarget.setHasFixedSize(true);
 		swipeTarget.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL_LIST));
+		swipeTarget.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+				if (dy>0){
+					visibleItemCount = mLinearLayoutManager.getChildCount();
+					totalItemCount = mLinearLayoutManager.getItemCount();
+					pastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
+					if (!loading && (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+						loading = true;
+						onLoadMore();
+					}
+				}
+			}
+		});
+
 
 		guokrAdapter = new GuokrAdapter(guokrHotItems, getActivity());
 		swipeTarget.setAdapter(guokrAdapter);
@@ -129,6 +145,10 @@ public class GuokrFragment extends BaseFragment implements IGuokrFragment, Swipe
 		guokrHotItems.clear();
 		//2016-04-05修复Inconsistency detected. Invalid view holder adapter positionViewHolder
 		guokrAdapter.notifyDataSetChanged();
+		mGuokrPresenter.getGuokrHot(currentOffset);
+	}
+
+	public void onLoadMore() {
 		mGuokrPresenter.getGuokrHot(currentOffset);
 	}
 }
