@@ -17,6 +17,7 @@ public class MicroApplication extends Application {
 		super.onCreate();
 		microApplication = this;
 		Stetho.initializeWithDefaults(this);
+		System.out.print("test branch");
 	}
 
 	public static Context getContext(){
