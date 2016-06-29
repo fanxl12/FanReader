@@ -2,8 +2,10 @@ package com.fanxl.fanreader.api.zhihu;
 
 import com.fanxl.fanreader.bean.UpdateItem;
 import com.fanxl.fanreader.bean.zhihu.ZhihuDaily;
+import com.fanxl.fanreader.bean.zhihu.ZhihuStory;
 
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import rx.Observable;
 
 /**
@@ -16,6 +18,9 @@ public interface ZhihuApi {
 
 	@GET("http://caiyao.name/releases/MrUpdate.json")
 	Observable<UpdateItem> getUpdateInfo();
+
+	@GET("/api/4/news/{id}")
+	Observable<ZhihuStory> getZhihuStory(@Path("id") String id);
 
 
 

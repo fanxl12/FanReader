@@ -3,19 +3,29 @@ package com.fanxl.fanreader.ui.activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.fanxl.fanreader.R;
 
 import java.io.File;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by fanxl2 on 2016/6/22.
@@ -27,12 +37,81 @@ public class TestActivity extends BaseActivity {
 	//被观察者
 	private Observable<String> observable;
 
+	private PublishSubject<String> publishSubject;
+	private Subscription s;
+
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.test);
-		ob();
-		beiOb();
+		initData();
+		init();
+//		ob();
+//		beiOb();
+	}
+
+	private void initData() {
+		publishSubject = PublishSubject.create();
+		s = publishSubject
+				.debounce(400, TimeUnit.MILLISECONDS)
+				.observeOn(Schedulers.io())
+				.map(new Func1<String, List<String>>() {
+					@Override
+					public List<String> call(String s) {
+						return null;
+					}
+				})
+				.subscribeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Observer<List<String>>() {
+					@Override
+					public void onCompleted() {
+
+					}
+
+					@Override
+					public void onError(Throwable e) {
+
+					}
+
+					@Override
+					public void onNext(List<String> strings) {
+						if (strings!=null){
+							for (String item :
+									strings) {
+
+							}
+						}
+					}
+				});
+
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (s!=null && !s.isUnsubscribed()){
+			s.unsubscribe();
+		}
+	}
+
+	private void init() {
+		EditText et_input = (EditText) findViewById(R.id.et_input);
+		et_input.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				publishSubject.onNext(s.toString());
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+
+			}
+		});
 	}
 
 	public void dingyue(View v){
@@ -63,6 +142,8 @@ public class TestActivity extends BaseActivity {
 		observable.subscribe(onNextAction, onErrorAction);
 		// 自动创建 Subscriber ，并使用 onNextAction、 onErrorAction 和 onCompletedAction 来定义 onNext()、 onError() 和 onCompleted()
 		observable.subscribe(onNextAction, onErrorAction, onCompletedAction);
+
+
 
 
 	}

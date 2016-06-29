@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.fanxl.fanreader.R;
 import com.fanxl.fanreader.bean.guokr.GuokrHotItem;
+import com.fanxl.fanreader.ui.activity.TestToolBarOne;
 import com.fanxl.fanreader.ui.activity.ZhihuStoryActivity;
 
 import java.util.ArrayList;
@@ -51,7 +52,8 @@ public class GuokrAdapter extends RecyclerView.Adapter<GuokrAdapter.GuokrViewHol
 		holder.itemView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(mContext, ZhihuStoryActivity.class);
+//				Intent intent = new Intent(mContext, ZhihuStoryActivity.class);
+				Intent intent = new Intent(mContext, TestToolBarOne.class);
 				intent.putExtra("type", ZhihuStoryActivity.TYPE_GUOKR);
 				intent.putExtra("id", guokrHotItem.getId());
 				intent.putExtra("title", guokrHotItem.getTitle());
